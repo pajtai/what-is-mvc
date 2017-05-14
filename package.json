@@ -1,0 +1,23 @@
+{
+  "name": "what-is-mvc",
+  "version": "1.0.0",
+  "description": "Understanding the concepts behind the popular design pattern of MVC will make you a more well rounded programmer. There are many frameworks across multiple languages that use MVC. To illustrate MVC, we will be using Node. We'll build an MVC express app from the ground up. The best way to learn something is to build it.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pajtai/what-is-mvc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pajtai/what-is-mvc/issues"
+  },
+  "homepage": "https://github.com/pajtai/what-is-mvc#readme",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
+}
