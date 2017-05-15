@@ -150,6 +150,16 @@ Below is our controller loader. We can now add controllers to the controller dir
 loaded:
 
 ```javascript
+'use strict';
+
+const BB = require('bluebird');
+const express = require('express');
+const glob = BB.promisify(require('glob'));
+const path = require('path');
+
+const app = express();
+const PORT = 3000;
+
 glob('app/controllers/*.controller.js')
     .then(controllers => {
         controllers.forEach(controllerFilePath => {
@@ -160,67 +170,62 @@ glob('app/controllers/*.controller.js')
             controller.singularName = controller.singularName || controller.name.replace(/s$/,'');
             console.log(`loading ${controller.name} - ${controller.singularName}`);
 
-
-            for (let action of Object.keys(controller)) {
-                switch (action) {
-                case 'index':
-                    app.get(`/${controller.name}/`, controller.index);
-                    break;
-                case 'create':
-                    app.get(`/${controller.name}/create`, controller.create);
-                    break;
-                case 'store':
-                    app.post(`/${controller.name}`, controller.store);
-                    break;
-                case 'show':
-                    console.log('show');
-                    app.get(`/${controller.name}/:${controller.singularName}`, controller.show);
-                    break;
-                case 'edit':
-                    app.get(`/${controller.name}/:${controller.singularName}/edit`, controller.edit);
-                    break;
-                case 'update':
-                    app.put(`/${controller.name}/:${controller.singularName}`, controller.update);
-                    break;
-                case 'destroy':
-                    app.delete(`/${controller.name}/:${controller.singularName}`, controller.destroy);
-                    break;
-                }
+            // Using ifs because ES6 class instance methods are a pain to iterate over - presving optin to use them
+            if (controller.index) {
+                app.get(`/${controller.name}/`, controller.index.bind(controller));
+            }
+            if (controller.create) {
+                app.get(`/${controller.name}/create`, controller.create.bind(controller));
+            }
+            if (controller.store) {
+                app.post(`/${controller.name}`, controller.store.bind(controller));
+            }
+            if (controller.show) {
+                app.get(`/${controller.name}/:${controller.singularName}`, controller.show.bind(controller));
+            }
+            if (controller.edit) {
+                app.get(`/${controller.name}/:${controller.singularName}/edit`, controller.edit.bind(controller));
+            }
+            if (controller.update) {
+                app.put(`/${controller.name}/:${controller.singularName}`, controller.update.bind(controller));
+            }
+            if (controller.destroy) {
+                app.delete(`/${controller.name}/:${controller.singularName}`, controller.destroy.bind(controller));
             }
         });
+
+        app.listen(PORT);
+        console.log(`Express started on port ${PORT}`);
     })
-    .catch(e => {
-        console.log(e);
-    });
+    .catch(e => console.log(e));
 ```
 
 You can try out the above with `git checkout controller-loader`.
 
-Here is what out controller looks like. Note that we are avoiding use of context (`this`), so that we don't have to 
-worry about using bind in places like `app.get('/' +controller.name + '/', controller.index);`
+Here is what out controller looks like. Note that use of ES6 classes is optional, and the below can be achieved with
+plain methods.
 
 ```javascript
 // pages.controller.js
 'use strict';
 
-module.exports = {
-    index,
-    show,
-    edit
-};
+class PagesController {
+    index (req, res, next) {
+        // Index will show what /home shows
+        req.params.page = 'home';
+        this.show(req, res, next);
+    }
 
-function index(req, res, next) {
-    // Index will show what /home shows
-    req.params.page = 'home';
-    show(req, res, next);
-}
+    show (req, res) {
+        res.send(`This is the ${req.params.page} page.`);
+    }
 
-function show(req, res) {
-    res.send(`This is the ${req.params.page} page.`);
-}
+    edit (req, res) {
 
-function edit(req, res) {
+    }
 
 }
+
+module.exports = new PagesController();
 
 ```

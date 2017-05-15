@@ -18,30 +18,27 @@ glob('app/controllers/*.controller.js')
             controller.singularName = controller.singularName || controller.name.replace(/s$/,'');
             console.log(`loading ${controller.name} - ${controller.singularName}`);
 
-            for (let action of Object.keys(controller)) {
-                switch (action) {
-                case 'index':
-                    app.get(`/${controller.name}/`, controller.index);
-                    break;
-                case 'create':
-                    app.get(`/${controller.name}/create`, controller.create);
-                    break;
-                case 'store':
-                    app.post(`/${controller.name}`, controller.store);
-                    break;
-                case 'show':
-                    app.get(`/${controller.name}/:${controller.singularName}`, controller.show);
-                    break;
-                case 'edit':
-                    app.get(`/${controller.name}/:${controller.singularName}/edit`, controller.edit);
-                    break;
-                case 'update':
-                    app.put(`/${controller.name}/:${controller.singularName}`, controller.update);
-                    break;
-                case 'destroy':
-                    app.delete(`/${controller.name}/:${controller.singularName}`, controller.destroy);
-                    break;
-                }
+            // Using ifs because ES6 class instance methods are a pain to iterate over - presving optin to use them
+            if (controller.index) {
+                app.get(`/${controller.name}/`, controller.index.bind(controller));
+            }
+            if (controller.create) {
+                app.get(`/${controller.name}/create`, controller.create.bind(controller));
+            }
+            if (controller.store) {
+                app.post(`/${controller.name}`, controller.store.bind(controller));
+            }
+            if (controller.show) {
+                app.get(`/${controller.name}/:${controller.singularName}`, controller.show.bind(controller));
+            }
+            if (controller.edit) {
+                app.get(`/${controller.name}/:${controller.singularName}/edit`, controller.edit.bind(controller));
+            }
+            if (controller.update) {
+                app.put(`/${controller.name}/:${controller.singularName}`, controller.update.bind(controller));
+            }
+            if (controller.destroy) {
+                app.delete(`/${controller.name}/:${controller.singularName}`, controller.destroy.bind(controller));
             }
         });
 
