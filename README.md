@@ -137,10 +137,6 @@ us to easily open controller files with IDE's that don't support opening `contro
 controller names come from the file name : `name.controller.js`. This will be used in `/name/:name/edit` for example.
 `req.param` will just be `name.replace(/s$/,'')`, but you can override that.
 
-Note that we are not using ES6 classes for our constructors, since it is a pain to iterate over methods in an ES6 class
-instance.... especially if some of those methods may also be static. Also, we run into issue with loss of context for
-things like `app.get('/', controller.method)`.
-
 Not all controllers will want to handle all actions, so let's make our controller loader smart enough for that.
 I'm going to use [glob](https://www.npmjs.com/package/glob) for pulling in our controllers, and 
 [bluebird](https://github.com/petkaantonov/bluebird) for handling async. Here is where the rich npm ecosystem really
