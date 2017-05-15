@@ -123,3 +123,75 @@ app.get('/:page/edit', pageController.edit);
 app.put('/:page', pageController.update);
 app.delete('/:page', pageController.destroy);
 ```
+
+This is `git checkout basic-controller2`.
+
+So far this has just been an exercise in create a pretty standard looking express app with some extra boiler plate. But
+now that we have a pattern going with what our controllers look like, we can have express load all our controllers 
+automagically based on convention. 
+
+Let's decide on our conventions. It will be that `app/controllers` has all our controllers.
+Each file in that directory will export a controller. Let's agree that all our controller names will be plural. So for 
+the Users controller we'll use `/users` and `/users/:user`. Also, let's name our files `*.controller.js`. This allows
+us to easily open controller files with IDE's that don't support opening `controllers/*.js`. Let's also agree that 
+controller names come from the file name : `name.controller.js`. This will be used in `/name/:name/edit` for example.
+`req.param` will just be `name.replace(/s$/,'')`, but you can override that.
+
+Note that we are not using ES6 classes for our constructors, since it is a pain to iterate over methods in an ES6 class
+instance.... especially if some of those methods may also be static. Also, we run into issue with loss of context for
+things like `app.get('/', controller.method)`.
+
+Not all controllers will want to handle all actions, so let's make our controller loader smart enough for that.
+I'm going to use [glob](https://www.npmjs.com/package/glob) for pulling in our controllers, and 
+[bluebird](https://github.com/petkaantonov/bluebird) for handling async. Here is where the rich npm ecosystem really
+starts to shine.
+
+Below is our controller loader. We can now add controllers to the controller directory, and they wil be automatically
+loaded:
+
+```javascript
+glob('app/controllers/*.controller.js')
+    .then(controllers => {
+        controllers.forEach(controllerFilePath => {
+            let controller = require(path.resolve(controllerFilePath));
+
+            // You can optionally override the automatic name given via the file
+            controller.name = controller.name || path.basename(controllerFilePath, '.controller.js');
+            controller.singularName = controller.singularName || controller.name.replace(/s$/,'');
+            console.log(`loading ${controller.name} - ${controller.singularName}`);
+
+
+            for (let action of Object.keys(controller)) {
+                switch (action) {
+                case 'index':
+                    app.get(`/${controller.name}/`, controller.index);
+                    break;
+                case 'create':
+                    app.get(`/${controller.name}/create`, controller.create);
+                    break;
+                case 'store':
+                    app.post(`/${controller.name}`, controller.store);
+                    break;
+                case 'show':
+                    console.log('show');
+                    app.get(`/${controller.name}/:${controller.singularName}`, controller.show);
+                    break;
+                case 'edit':
+                    app.get(`/${controller.name}/:${controller.singularName}/edit`, controller.edit);
+                    break;
+                case 'update':
+                    app.put(`/${controller.name}/:${controller.singularName}`, controller.update);
+                    break;
+                case 'destroy':
+                    app.delete(`/${controller.name}/:${controller.singularName}`, controller.destroy);
+                    break;
+                }
+            }
+        });
+    })
+    .catch(e => {
+        console.log(e);
+    });
+```
+
+You can try out the above with `git checkout controller-loader`.

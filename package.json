@@ -4,7 +4,7 @@
   "description": "Understanding the concepts behind the popular design pattern of MVC will make you a more well rounded programmer. There are many frameworks across multiple languages that use MVC. To illustrate MVC, we will be using Node. We'll build an MVC express app from the ground up. The best way to learn something is to build it.",
   "main": "index.js",
   "scripts": {
-    "dev" : "nodemon -V app",
+    "dev": "nodemon -V app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/pajtai/what-is-mvc#readme",
   "dependencies": {
-    "express": "^4.15.2"
+    "bluebird": "^3.5.0",
+    "express": "^4.15.2",
+    "glob": "^7.1.1"
   }
 }
