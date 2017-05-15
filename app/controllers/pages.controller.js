@@ -6,7 +6,6 @@ module.exports = {
     edit
 };
 
-// Not using es6 classes, since methods are not enumerable
 function index(req, res, next) {
     // Index will show what /home shows
     req.params.page = 'home';

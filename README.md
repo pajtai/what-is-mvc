@@ -195,3 +195,32 @@ glob('app/controllers/*.controller.js')
 ```
 
 You can try out the above with `git checkout controller-loader`.
+
+Here is what out controller looks like. Note that we are avoiding use of context (`this`), so that we don't have to 
+worry about using being in places like `app.get('/' +controller.name + '/', controller.index);`
+
+```javascript
+// pages.controller.js
+'use strict';
+
+module.exports = {
+    index,
+    show,
+    edit
+};
+
+function index(req, res, next) {
+    // Index will show what /home shows
+    req.params.page = 'home';
+    show(req, res, next);
+}
+
+function show(req, res) {
+    res.send(`This is the ${req.params.page} page.`);
+}
+
+function edit(req, res) {
+
+}
+
+```
