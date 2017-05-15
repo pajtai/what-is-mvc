@@ -18,7 +18,6 @@ glob('app/controllers/*.controller.js')
             controller.singularName = controller.singularName || controller.name.replace(/s$/,'');
             console.log(`loading ${controller.name} - ${controller.singularName}`);
 
-
             for (let action of Object.keys(controller)) {
                 switch (action) {
                 case 'index':
@@ -31,7 +30,6 @@ glob('app/controllers/*.controller.js')
                     app.post(`/${controller.name}`, controller.store);
                     break;
                 case 'show':
-                    console.log('show');
                     app.get(`/${controller.name}/:${controller.singularName}`, controller.show);
                     break;
                 case 'edit':
@@ -47,9 +45,7 @@ glob('app/controllers/*.controller.js')
             }
         });
     })
-    .catch(e => {
-        console.log(e);
-    });
+    .catch(e => console.log(e));
 
 app.listen(PORT);
 console.log(`Express started on port ${PORT}`);
