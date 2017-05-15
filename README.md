@@ -1,6 +1,6 @@
 # What is MVC
 
-Understanding the concepts behind the popular design pattern of MVC will make you a more well rounded programmer. There
+Understanding the concepts behind the popular architectural design pattern of MVC will make you a more well rounded programmer. There
 are many frameworks across multiple languages that use MVC. To illustrate MVC, we will be using Node. We'll build an
 MVC express app from the ground up. The best way to learn something is to build it.
 
@@ -27,3 +27,33 @@ we're gong to build a website. The website will have:
 Let's start with the typical hard coded "Hello World!" home page. Any user can look at this page. To render it, we will
 need a router, a controller, and a view. Since we know the contents of the page, we don't need a model yet.
 
+You can follow along by cloning the [What Is MVC](https://github.com/pajtai/what-is-mvc) repo and checking out the tags 
+we are discussing.
+
+```
+git clone git@github.com:pajtai/what-is-mvc.git
+```
+
+The first thing we'll do is setup our app using an `npm init -y` and creating a `.gitignore`. Now we're ready to 
+include express and start the app:
+
+```javascript
+'use strict';
+
+const express = require('express');
+const app = express();
+const PORT = 3000;
+
+const pageController = {
+    index(req, res) {
+        res.send('Hello World');
+    }
+};
+
+app.get('/', pageController.index);
+
+app.listen(PORT);
+console.log(`Express started on port ${PORT}`);
+```
+
+To 
