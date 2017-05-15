@@ -225,3 +225,39 @@ class PagesController {
 module.exports = new PagesController();
 
 ```
+
+Let's first stub out the rest of pages and all of the users controller, and then we'll move on to Models. Here's is what the stubbed out Users Controller looks like:
+
+```javascript
+'use strict';
+
+class UsersController {
+    index (req, res, next) {
+        res.send(`Index ${req.params.user}`);
+    }
+
+    create (req, res) {
+        res.send(`Create ${req.params.user}`);
+    }
+
+    show (req, res) {
+        res.send(`This is the ${req.params.user} page.`);
+    }
+
+    edit (req, res) {
+        res.send(`Edit ${req.params.user}`);
+    }
+
+    update(req, res) {
+        res.send(`Update ${req.params.user}`);
+    }
+
+    delete(req, res) {
+        res.send(`Delete ${req.params.user}`);
+    }
+
+}
+
+module.exports = new UsersController();
+```
+
