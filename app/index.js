@@ -44,8 +44,8 @@ glob('app/controllers/*.controller.js')
                 }
             }
         });
+
+        app.listen(PORT);
+        console.log(`Express started on port ${PORT}`);
     })
     .catch(e => console.log(e));
-
-app.listen(PORT);
-console.log(`Express started on port ${PORT}`);
