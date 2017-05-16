@@ -278,8 +278,17 @@ another, you can extract that code as a separate module or service.
 To create a Page Model, we must first connect to the database. This means we have to get configs from somewhere. For now
 we will hard code some localhost configs, so make sure you have mysql installed.
 
-```javascript
-const sequelize = new Sequelize('mysql://127.0.0.1:3306/mvc');
+The first thing we'll do is programmatically describe our databases. This is done using migrations.
+
+```bash
+npm install -g sequelize-cli 
+# from the project root
+sequelize init
+# create our first migration file
+sequelize migration:create
 ```
 
-The first thing we'll do is programmatically describe our databases. This is done using migrations.
+[Here](http://docs.sequelizejs.com/manual/tutorial/models-definition.html#data-types) are the Sequelize data types.
+
+The docs say to use mysql2, but only mysql works. Also, the `config`, `migrations`, and `model` dirs must be in the root
+of your repo.
