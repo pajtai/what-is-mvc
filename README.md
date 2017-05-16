@@ -286,9 +286,59 @@ npm install -g sequelize-cli
 sequelize init
 # create our first migration file
 sequelize migration:create
+# now initialize the models dir in app/models
+sequlize init:models --models-path app/models
 ```
 
 [Here](http://docs.sequelizejs.com/manual/tutorial/models-definition.html#data-types) are the Sequelize data types.
 
 The docs say to use mysql2, but only mysql works. Also, the `config`, `migrations`, and `model` dirs must be in the root
 of your repo.
+
+Here is what our Pages model looks like after initializing and manually tweaking:
+
+```bash
+sequelize  model:create --name Pages --attributes id:integer,title:string,content:text
+```
+
+```javascript
+'use strict';
+module.exports = function(sequelize, DataTypes) {
+  var Pages = sequelize.define('Pages', {
+      id: {
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true,
+          type: DataTypes.INTEGER
+      },
+      title: {
+          type: DataTypes.STRING
+      },
+      content: {
+          type: DataTypes.TEXT
+      },
+      createdAt: {
+          allowNull: false,
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW
+      },
+      updatedAt: {
+          allowNull: false,
+          type: DataTypes.DATE
+      }
+  }, {
+    classMethods: {
+      associate: function(models) {
+        // associations can be defined here
+      }
+    }
+  });
+  return Pages;
+};
+```
+
+Now we'll seed the db with the home page:
+
+```bash
+sequelize seed:create --name home-page-seed --models-path app/models
+```
