@@ -261,3 +261,25 @@ class UsersController {
 module.exports = new UsersController();
 ```
 
+### Models
+
+There is no need to use an ORM for models, but it is often convenient to do so. [Sequlize](https://www.npmjs.com/package/sequelize) is a popular ORM for SQL
+databases. In addition to its ORM functionality, it also includes support for migrations. We will be using Sequelize
+for our models.
+
+Let's create a page model. You'll notice we have both a Page Model and a Page Controller. Controllers are often paired
+with models like this. Sometime a controller can use more than one Model, but most often they will be paired one to one.
+This means that you will frequently have to decide whether a piece of code should go in a Model, a Controller, or maybe
+even somewher else. A common philosophy is thin controllers and fat models. This is because controllers are dependent
+on routing. So you'll be looking at the request object a lot in a Controller. This makes it easy to write non reusable
+controller code. Models on the other hand can be more abstract. If you find yourself repeating code in one Model and then
+another, you can extract that code as a separate module or service.
+
+To create a Page Model, we must first connect to the database. This means we have to get configs from somewhere. For now
+we will hard code some localhost configs, so make sure you have mysql installed.
+
+```javascript
+const sequelize = new Sequelize('mysql://127.0.0.1:3306/mvc');
+```
+
+The first thing we'll do is programmatically describe our databases. This is done using migrations.
