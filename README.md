@@ -275,6 +275,8 @@ on routing. So you'll be looking at the request object a lot in a Controller. Th
 controller code. Models on the other hand can be more abstract. If you find yourself repeating code in one Model and then
 another, you can extract that code as a separate module or service.
 
+TODO: discuss importance of seeds / migrations / deploys
+
 To create a Page Model, we must first connect to the database. This means we have to get configs from somewhere. For now
 we will hard code some localhost configs, so make sure you have mysql installed.
 
@@ -342,3 +344,57 @@ Now we'll seed the db with the home page:
 ```bash
 sequelize seed:create --name home-page-seed --models-path app/models
 ```
+
+Sequelize has a nice CLI. It work by default with all directories in the app root. In our case models should be in `app/`,
+so keep that in mind.
+
+For the seed file, we'll require in the models and add one:
+
+```javascript
+
+```
+
+Running seeds is like running migrations.
+
+queryInterface.bulkInsert errors out and has no docs, so you can just import models and do that.
+
+The sequelize general guide is at: http://docs.sequelizejs.com/
+
+and the detailed docs are at: http://docs.sequelizejs.com/identifiers.html
+
+So our initial seed is:
+
+```javascript
+'use strict';
+
+const models = require('../app/models');
+
+module.exports = {
+    up: function (queryInterface, Sequelize) {
+        // couldn't get queryInterface.bulkInsert to work
+        return models.Pages
+            .findOrCreate({where: {
+                title: 'Home',
+                content: '<h1>Hello world!</h1>'
+            }})
+            .spread((user, created) => {
+                console.log(user.get({
+                    plain : true
+                }));
+                console.log('created', created);
+            });
+    },
+
+    down: function (queryInterface, Sequelize) {
+        return models.Pages
+            .destroy({where: {
+                title: 'Home',
+                content: '<h1>Hello world!</h1>'
+            }})
+            .then(numDeleted => {
+                console.log('deleted', numDeleted);
+            });
+    }
+};
+```
+
