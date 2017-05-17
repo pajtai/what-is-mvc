@@ -414,7 +414,7 @@ Now that we have a Model and some data, let's show some data from the DB at `/pa
 Controller. We'll update the show action:
 
 ```javascript
-    show (req, res) {
+    show (req, res, next) {
         models.Pages.findOne({
             where: { slug: req.params.page }
         })
@@ -423,10 +423,35 @@ Controller. We'll update the show action:
             })
             .catch(e => {
                 console.log(404);
+                next();
             });
     }
 ```
 
+## Adding the home page at `/`
 
+Let's allow picking a controller to handle the home page. We'll say that if the controller has this.default = true, then
+it is the home page controller.
+
+```javascript
+class PagesController {
+    
+    constructor () {
+        this.default = true;
+    }
+```
+
+And in our controller loader:
+
+```javascript
+// No need to check for handling the home page if there is no index
+if (controller.index) {
+    if (controller.default) {
+        console.log('registering home page - this should only be called once');
+        app.get('/', controller.index.bind(controller));
+    }
+    app.get(`/${controller.name}/`, controller.index.bind(controller));
+}
+```
 
 

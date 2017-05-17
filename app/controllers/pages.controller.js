@@ -4,6 +4,10 @@ const models = require('../models');
 
 class PagesController {
 
+    constructor () {
+        this.default = true;
+    }
+
     index (req, res, next) {
         // Index will show what /home shows
         req.params.page = 'home';
@@ -14,7 +18,7 @@ class PagesController {
         res.send(`Create ${req.params.page}`);
     }
 
-    show (req, res) {
+    show (req, res, next) {
         models.Pages.findOne({
             where: { slug: req.params.page }
         })
@@ -23,6 +27,7 @@ class PagesController {
             })
             .catch(e => {
                 console.log(404);
+                next();
             });
     }
 

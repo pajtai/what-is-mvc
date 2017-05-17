@@ -20,6 +20,10 @@ glob('app/controllers/*.controller.js')
 
             // Using ifs because ES6 class instance methods are a pain to iterate over - presving optin to use them
             if (controller.index) {
+                if (controller.default) {
+                    console.log('registering home page - this should only be called once');
+                    app.get('/', controller.index.bind(controller));
+                }
                 app.get(`/${controller.name}/`, controller.index.bind(controller));
             }
             if (controller.create) {
