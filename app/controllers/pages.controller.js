@@ -1,6 +1,8 @@
 'use strict';
 
-const models = require('../models');
+console.log(require.main.require('../core').boot, '...');
+// TODO: change order of things so core.models will work
+const models = require.main.require('../core/loadModels');
 
 class PagesController {
 

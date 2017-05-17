@@ -1,3 +1,3 @@
 'use strict';
 
-require('../core');
+require.main.require('../core').boot();
