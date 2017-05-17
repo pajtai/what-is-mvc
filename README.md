@@ -474,3 +474,4 @@ seeders
 
 For now we will simply hard code everything in core, and we will decide later how to configure it.
 
+Do `git checkout core-created` to take a look at the beginnings of core.
