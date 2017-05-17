@@ -5,15 +5,16 @@ const glob      = require('glob');
 const path      = require('path');
 const Sequelize = require('sequelize');
 const env       = process.env.NODE_ENV || 'development';
-const config    = require('../config/config.json')[env];
+const config    = require('../../config/config.json')[env];
 
 module.exports = () => {
     let db = {};
+    let sequelize;
 
     if (config.use_env_variable) {
-        var sequelize = new Sequelize(process.env[config.use_env_variable]);
+        sequelize = new Sequelize(process.env[config.use_env_variable]);
     } else {
-        var sequelize = new Sequelize(config.database, config.username, config.password, config);
+        sequelize = new Sequelize(config.database, config.username, config.password, config);
     }
 
     glob.sync('app/models/*.model.js').forEach(modelPath => {

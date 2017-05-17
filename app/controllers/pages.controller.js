@@ -17,7 +17,17 @@ class PagesController {
     }
 
     create (req, res) {
-        res.send(`Create ${req.params.page}`);
+        res.render('pages/pages.create.view.pug');
+    }
+
+    store (req, res) {
+        models.Pages.create(req.body)
+            .then(() => {
+                res.redirect(`/pages/${req.body.slug}`);
+            })
+            .catch(e => {
+                res.send(e);
+            });
     }
 
     show (req, res, next) {

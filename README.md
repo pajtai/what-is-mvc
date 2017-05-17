@@ -1,23 +1,33 @@
 # What is MVC
 
 MVC allows you to separate your business logic from the rest of your user interface. Models encapsulate the business logic,
-views show the user interface, and controllers receive input and call render views via models.
+views show the user interface, and controllers receive input and render views via models.
 
 Understanding the concepts behind the popular architectural design pattern of MVC will make you a more well rounded programmer. There
 are many frameworks across multiple languages that use MVC. To illustrate MVC, we will be using Node. We'll build an
 MVC express app from the ground up. The best way to learn something is to build it.
 
 Node is especially suited for this type of exploration, since node has a lot of great libraries, but no towering MVC
-frameworks. Many other languages have mature established MVC frameworks. Ruby has Ruby on Rails, and PHP has Laravel.
-Node has several, but none are as well established as its counterparts. Node however has a rich ecosystem of libraries
+frameworks. Many other languages have mature established MVC frameworks. Ruby has Ruby on Rails, PHP has Laravel, ASP.net
+has the MVC Framework. Node has several, but none are as well established as its counterparts. Node however has a rich ecosystem of libraries
 via NPM. Building a simple MVC app is a great way to leverage the rich NPM ecosystem. You might be wondering what the 
 difference between a library and a framework is. You call a library. A framework calls you.
 
 Let's start by breaking MVC into it's component parts. M is for Model, V is for View, and C is for Controller. There is
 one more essential part without which MVC doesn't work: a router. So MVC is a design pattern to help organize how you
 handle http requests. Each request is routed to a controller. Each controller has one or more actions. A request is
-handled by an action. The action uses one or more models to inform a view. To understand in detail what all of this means,
-we're gong to build a website. The website will have:
+handled by an action. The action uses one or more models to inform a view. 
+
+In addition to the main actors above, there a suite of helpers that an MVC framework uses. These helpers vary from 
+framework to framework, but they essentially help you further organize your app. These secondary actors include things
+like services, mailers, startup scripts, templating for views, an ORM for models, etc.
+
+Since MVC is an organizational pattern, you'll notice that MVC frameworks have well defined places for all your various
+types of files. This is one the things that makes MVC so powerful. Organizing things clearly removes a great amount of
+cognitive load and enable speedier development.
+
+The above sounds like a great idea, but it is described in very general terms. To understand in detail what all of it 
+means, we're gong to build a website. The website will have:
 
 1. Web pages
 1. The ability to edit those pages
@@ -113,6 +123,22 @@ If you try the above and visit http://localhost:3000/ and http://localhost:3000/
 same output.
 
 To flesh out the example let's include all the actions Laravel uses:
+
+```
+Laravel Router Verbs and Actions
+
++-----------+-----------------------+-----------+-------------------+
+| Verb      | URI                   | Action    | Route Name        |
++-----------+-----------------------+-----------+-------------------+
+| GET       | /photos               | index     | photos.index      |
+| GET       | /photos/create        | create    | photos.create     |
+| POST      | /photos               | store     | photos.store      |
+| GET       | /photos/{photo}       | show      | photos.show       |
+| GET       | /photos/{photo}/edit  | edit      | photos.edit       |
+| PUT/PATCH | /photos/{photo}       | update    | photos.update     |
+| DELETE    | /photos/{photo}       | destroy   | photos.destroy    |
++-----------+-----------------------+-----------+-------------------+
+```
 
 ```javascript
 app.get('/', pageController.index);
@@ -428,7 +454,7 @@ Controller. We'll update the show action:
     }
 ```
 
-## Adding the home page at `/`
+#### Adding the home page at `/`
 
 Let's allow picking a controller to handle the home page. We'll say that if the controller has this.default = true, then
 it is the home page controller.
@@ -475,3 +501,98 @@ seeders
 For now we will simply hard code everything in core, and we will decide later how to configure it.
 
 Do `git checkout core-created` to take a look at the beginnings of core.
+
+## Editing Web Pages
+
+### Views
+
+So far we've just been using express' `res.render` to return strings from the database. This method quickly becomes 
+cumbersome. Templating data via views is much nicer. We'll use pug template, but the same principles apply for all types
+of templating.
+
+#### The create page
+
+To add pages, we need an admin form at `/pages/create` into which we can add the new page content. Let's setup the Page
+Controller `create` action to render a view for us:
+
+```bash
+# in the terminal
+npm install --save pug
+```
+
+```javascript
+// add to core/index.js
+app.set('view engine', 'pug');
+app.set('views', 'app/views');
+```
+
+```javascript
+// modify the Pages Controller
+create (req, res) {
+    res.render('pages/pages.create.view.pug');
+}
+```
+
+And now let's create our simple edit form. We know where the action should go based upon our MVC conventions:
+
+```jade
+html
+    head
+        title Create a Page
+        link(   rel="stylesheet"
+                type="text/css"
+                href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+                integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+                crossorigin="anonymous")
+    body
+        .container
+            .jumbotron
+                h1 Create a Page
+            form(action="/pages" method="post")
+                .form-group
+                    label(for="title") Title
+                    input#title.form-control(type="text" name="title" placeholder="Enter title")
+                .form-group
+                    label(for="slug") Slug
+                    input#slug.form-control(type="text" name="slug" placeholder="Enter slug")
+                    small.form-text.text-muted The part after /pages/
+                .form-group
+                    label(for="content") Content
+                    textarea#content.form-control(name="content" rows="5")
+                button.btn.btn-primary(type="submit") Create
+```
+
+We do some form cleanup later, since we might want to protect against things like CSRF, but for now we'll just worry
+about implementing the `store` action:
+
+```bash
+npm install --save body-parser
+```
+
+```javascript
+// add to core/index.js
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
+```
+
+The above will parse form data into a JSON object available as `req.body`.
+
+Now we can complete the page creation functionality with:
+
+```javascript
+// modify page.controller.js
+store (req, res) {
+    models.Pages.create(req.body)
+        .then(() => {
+            res.redirect(`/pages/${req.body.slug}`);
+        })
+        .catch(e => {
+            res.send(e);
+        });
+}
+```
+
+To look at the code for this do `git checkout create-functionality`.

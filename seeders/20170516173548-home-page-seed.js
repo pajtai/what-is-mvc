@@ -1,6 +1,6 @@
 'use strict';
 
-const models = require('../app/models');
+const models = require('../core/loaders/models')();
 
 module.exports = {
     up: function (queryInterface, Sequelize) {

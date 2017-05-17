@@ -1,6 +1,6 @@
 'use strict';
 
-const loadControllers = require('./loadControllers');
+const loadControllers = require('./controllers');
 
 module.exports = app => {
     const controllers = loadControllers();
