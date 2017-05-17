@@ -71,7 +71,7 @@ app.listen(PORT);
 console.log(`Express started on port ${PORT}`);
 ```
 
-To try the above out, clone this repo and do: `git checkout basic-controller; npm run dev`. Make sure you have nodemon
+To try the above out, clone this repo and do: [`git checkout basic-controller; npm run dev`](https://github.com/pajtai/what-is-mvc/tree/basic-controller). Make sure you have nodemon
 installed globally.
 
 You'll notice that the `index` action is handling the home page get request. Take a look at [the actions Laravel controllers
@@ -150,7 +150,7 @@ app.put('/:page', pageController.update);
 app.delete('/:page', pageController.destroy);
 ```
 
-This is `git checkout basic-controller2`.
+This is [`git checkout basic-controller2`](https://github.com/pajtai/what-is-mvc/tree/basic-controller2).
 
 So far this has just been an exercise in create a pretty standard looking express app with some extra boiler plate. But
 now that we have a pattern going with what our controllers look like, we can have express load all our controllers 
@@ -222,7 +222,7 @@ glob('app/controllers/*.controller.js')
     .catch(e => console.log(e));
 ```
 
-You can try out the above with `git checkout controller-loader`.
+You can try out the above with [`git checkout controller-loader`](https://github.com/pajtai/what-is-mvc/tree/controller-loader).
 
 Here is what out controller looks like. Note that use of ES6 classes is optional, and the below can be achieved with
 plain methods.
@@ -500,7 +500,7 @@ seeders
 
 For now we will simply hard code everything in core, and we will decide later how to configure it.
 
-Do `git checkout core-created` to take a look at the beginnings of core.
+Do [`git checkout core-created`](https://github.com/pajtai/what-is-mvc/tree/core-created) to take a look at the beginnings of core.
 
 ## Editing Web Pages
 
@@ -595,4 +595,4 @@ store (req, res) {
 }
 ```
 
-To look at the code for this do `git checkout create-functionality`.
+To look at the code for this do [`git checkout create-functionality`](https://github.com/pajtai/what-is-mvc/tree/create-functionality).
