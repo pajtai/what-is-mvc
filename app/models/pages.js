@@ -10,6 +10,9 @@ module.exports = function(sequelize, DataTypes) {
       title: {
           type: DataTypes.STRING
       },
+      slug: {
+          type: DataTypes.STRING
+      },
       content: {
           type: DataTypes.TEXT
       },

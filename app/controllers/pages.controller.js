@@ -1,5 +1,7 @@
 'use strict';
 
+const models = require('../models');
+
 class PagesController {
 
     index (req, res, next) {
@@ -13,7 +15,15 @@ class PagesController {
     }
 
     show (req, res) {
-        res.send(`This is the ${req.params.page} page.`);
+        models.Pages.findOne({
+            where: { slug: req.params.page }
+        })
+            .then(page => {
+                res.send(page.title + ' : ' + page.content);
+            })
+            .catch(e => {
+                console.log(404);
+            });
     }
 
     edit (req, res) {

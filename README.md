@@ -277,6 +277,14 @@ another, you can extract that code as a separate module or service.
 
 TODO: discuss importance of seeds / migrations / deploys
 
+#### Migrations
+
+One thing to watch out for with migrations, is that column additions require both a migration and a model update. For 
+example, if we add a slug column to the `pages` table, the requires an `addColumn` in the migration and adding `slug`
+to the model.
+
+#### Seeds
+
 To create a Page Model, we must first connect to the database. This means we have to get configs from somewhere. For now
 we will hard code some localhost configs, so make sure you have mysql installed.
 
@@ -348,12 +356,6 @@ sequelize seed:create --name home-page-seed --models-path app/models
 Sequelize has a nice CLI. It work by default with all directories in the app root. In our case models should be in `app/`,
 so keep that in mind.
 
-For the seed file, we'll require in the models and add one:
-
-```javascript
-
-```
-
 Running seeds is like running migrations.
 
 queryInterface.bulkInsert errors out and has no docs, so you can just import models and do that.
@@ -397,4 +399,34 @@ module.exports = {
     }
 };
 ```
+
+To run the seed from the root of our project we can do:
+
+```bash
+sequelize db:seed:all --models-path app/models
+```
+
+The above is idempotent. It can be run multiple times and will only ever add one row to the table due to the `findOrCreate`.
+
+#### Using Models in Controllers
+
+Now that we have a Model and some data, let's show some data from the DB at `/pages`. We'll have to update our Pages
+Controller. We'll update the show action:
+
+```javascript
+    show (req, res) {
+        models.Pages.findOne({
+            where: { slug: req.params.page }
+        })
+            .then(page => {
+                res.send(page.title + ' : ' + page.content);
+            })
+            .catch(e => {
+                console.log(404);
+            });
+    }
+```
+
+
+
 
