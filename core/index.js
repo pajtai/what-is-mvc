@@ -11,8 +11,10 @@ const loadRoutes = require('./loaders/routes');
 const app = express();
 const PORT = 3000;
 
+console.log('>>> loading <<<');
 exports.models = loadModels();
 exports.controllers = loadControllers();
+console.log('>>> done loading <<<');
 exports.boot = () => {
     app.set('view engine', 'pug');
     app.set('views', 'app/views');

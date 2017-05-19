@@ -1,11 +1,15 @@
 'use strict';
 
-const loadControllers = require('./controllers');
+// Cannot require controllers in directly, since they're not defined yet here
+const core = require('../index');
 
 module.exports = app => {
-    const controllers = loadControllers();
+    let controllers = core.controllers;
     for (let controllerKey of Object.keys(controllers)) {
         let controller = controllers[controllerKey];
+        if (!controller.resource) {
+            continue;
+        }
         // Using ifs because ES6 class instance methods are a pain to iterate over - presving optin to use them
         if (controller.index) {
             if (controller.default) {

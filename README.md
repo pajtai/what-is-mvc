@@ -224,6 +224,11 @@ glob('app/controllers/*.controller.js')
 
 You can try out the above with [`git checkout controller-loader`](https://github.com/pajtai/what-is-mvc/tree/controller-loader).
 
+These type of Controllers are called "Resource" Controllers in Laravel parlance. It is very convenient
+to have the routing generate automatically for these types of controllers. Not all Controllers have to be
+Resource Controllers. Eventually we'll have to figure how to flag Resource Controllers as such, so that we 
+can create Controllers that don't automatically get loaded into the routing.
+
 Here is what out controller looks like. Note that use of ES6 classes is optional, and the below can be achieved with
 plain methods.
 
@@ -596,3 +601,56 @@ store (req, res) {
 ```
 
 To look at the code for this do [`git checkout create-functionality`](https://github.com/pajtai/what-is-mvc/tree/create-functionality).
+
+#### Adding more create pages
+
+One thing to note, is that this create page looks very generic. If we add users, our page will look very similar. It seems
+like we should be able to create a single Admin Controller that handles all or our different data types. All it would have
+to do is look at the model and based on the model fields build out the admin page.
+
+Another advantage of having a single Admin Controller is that it makes the url structure more standard. Currently there is
+no one admin prefix. For creating users, you would have to go to `/users/create` and for pages you got `/pages/create`.
+If we have one admin controller, then creating of users and pages would be `/admin/users/create` and `/admin/pages/create`
+respectively. This seems to make more sense to me.
+
+Finally, we'll keep our controllers cleaner and less repetitive.
+
+Unfortunately, this will require some creative additions to our Controller functionality, but
+otherwise we will be stuck creating the same admin like features for each Controller.
+
+#### The Admin Controller
+
+The first thing to notice about the admin controller is that it doesn't adhere to our standard Resource Controller routing.
+To create a new page for example, one would expect to go to `/admin/pages/create`. A Resource
+Controller's routing would be `/admin/create`. This means we need to have to the ability to
+create other types of Controllers than resource controllers. The easiest way to achieve this is
+to just not load the Controller automatically at all. We can just have the actions tied to routes
+in a separate routes file.
+
+We can simply create a subdirectory inside `app/controllers`. The folder structure is a little nested
+at this point, but it'll be nice and explicit. `app/controllers/resource` will get auto loaded as
+Resource Controllers. `app/controllers/basic` will not.
+
+To achieve this, let's first update `core/loaders/controllers` and load the resource controllers 
+ and then the basic controllers. We should flag the resource controllers, so that they can be
+ easily loaded into the routes.
+ 
+```javascript
+glob.sync('app/controllers/resource/*.controller.js').forEach(controllerFilePath => {
+    let controller = createController(controllerFilePath);
+    // Flag this as a resource controller
+    controller.resource = true;
+    controllers[controller.name] = controller;
+});
+```
+
+Now we just have to make sure that when we load routes, we only load routes from Resource Controllers.
+
+```javascript
+for (let controllerKey of Object.keys(controllers)) {
+    let controller = controllers[controllerKey];
+    if (!controller.resource) {
+        continue;
+    }
+```
+

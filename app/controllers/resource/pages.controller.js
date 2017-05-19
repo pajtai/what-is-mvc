@@ -16,10 +16,12 @@ class PagesController {
         this.show(req, res, next);
     }
 
+    // HTML for a new page
     create (req, res) {
         res.render('pages/pages.create.view.pug');
     }
 
+    // API for a new page
     store (req, res) {
         models.Pages.create(req.body)
             .then(() => {
@@ -29,6 +31,7 @@ class PagesController {
                 res.send(e);
             });
     }
+
 
     show (req, res, next) {
         models.Pages.findOne({
