@@ -613,6 +613,9 @@ no one admin prefix. For creating users, you would have to go to `/users/create`
 If we have one admin controller, then creating of users and pages would be `/admin/users/create` and `/admin/pages/create`
 respectively. This seems to make more sense to me.
 
+Additionally, eventually will want auth on our admin. With express it would be easy to create a router at `/admin` and add
+an auth middleware to that.
+
 Finally, we'll keep our controllers cleaner and less repetitive.
 
 Unfortunately, this will require some creative additions to our Controller functionality, but
@@ -654,3 +657,49 @@ for (let controllerKey of Object.keys(controllers)) {
     }
 ```
 
+Run `git checkout basic-controllers` to take a look at the above.
+
+To implement the admin controller, all we need is a routes file. Let's put it at `app/routes.js`. We can retrieve the Controllers
+from core using `require.main.require('./core').controllers`, but how are we going to retrieve the app for routing?
+We could expose `core.app`, but at this point it might be better to start using dependency injection. That will get rid
+of all the require statements, and it'll make it easy to test all of our files by calling them with mocks.
+
+So let's implement DI for routes.js first. Then we can do it for the Controllers and Models too.
+
+Let's test out `routes.js` by attaching the admin index controller to it.
+
+```javascript
+'use strict';
+
+const express = require('express');
+
+module.exports = (app, controllers) => {
+
+    // We are creating a separate router, since we know that we will want to attach auth to admin eventually
+    let adminRouter = express.Router();
+    adminRouter.get('/:type', controllers.admin.index);
+
+    app.use('/admin', adminRouter);
+};
+```
+
+We'll think about which controller the `/admin` will take later.
+
+We can load `routes.js` after loading our Resource Controllers. So we'll update `core/loaders/routes.js`:
+
+```javascript
+'use strict';
+
+// Cannot require controllers in directly, since they're not defined yet here
+const core = require('../index');
+const routes = require('../../app/routes');
+
+module.exports = app => {
+    loadResourceControllers(app);
+    loadBasicControllers(app);
+};
+
+function loadBasicControllers(app) {
+    routes(app, core.controllers);
+}
+```

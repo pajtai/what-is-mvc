@@ -2,8 +2,18 @@
 
 // Cannot require controllers in directly, since they're not defined yet here
 const core = require('../index');
+const routes = require('../../app/routes');
 
 module.exports = app => {
+    loadResourceControllers(app);
+    loadBasicControllers(app);
+};
+
+function loadBasicControllers(app) {
+    routes(app, core.controllers);
+}
+
+function loadResourceControllers(app) {
     let controllers = core.controllers;
     for (let controllerKey of Object.keys(controllers)) {
         let controller = controllers[controllerKey];

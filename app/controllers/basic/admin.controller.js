@@ -1,11 +1,8 @@
 'use strict';
 
 class AdminController {
-    constructor () {
-        this.routes = {
-            create : '/admin/:type/create',
-            store : '/admin/:type'
-        }
+    index(req, res) {
+        res.send('admin index!');
     }
 }
 
