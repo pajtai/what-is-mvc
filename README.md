@@ -754,3 +754,6 @@ module.exports = models => {
 };
 ```
 
+#### Admin Page
+
+Let's start with `/:type/create` for our admin panel:
