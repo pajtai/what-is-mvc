@@ -6,4 +6,6 @@ class AdminController {
     }
 }
 
-module.exports = new AdminController();
+module.exports = models => {
+    return new AdminController();
+};

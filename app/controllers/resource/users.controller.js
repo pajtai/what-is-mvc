@@ -27,4 +27,6 @@ class UsersController {
 
 }
 
-module.exports = new UsersController();
+module.exports = models => {
+    return new UsersController();
+};

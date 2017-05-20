@@ -1,13 +1,12 @@
 'use strict';
 
 console.log(require.main.require('../core').boot, '...');
-// TODO: change order of things so core.models will work
-const models = require.main.require('../core').models;
 
 class PagesController {
 
-    constructor () {
+    constructor (models) {
         this.default = true;
+        this.models = models;
     }
 
     index (req, res, next) {
@@ -23,7 +22,7 @@ class PagesController {
 
     // API for a new page
     store (req, res) {
-        models.Pages.create(req.body)
+        this.models.Pages.create(req.body)
             .then(() => {
                 res.redirect(`/pages/${req.body.slug}`);
             })
@@ -34,7 +33,7 @@ class PagesController {
 
 
     show (req, res, next) {
-        models.Pages.findOne({
+        this.models.Pages.findOne({
             where: { slug: req.params.page }
         })
             .then(page => {
@@ -59,4 +58,6 @@ class PagesController {
     }
 }
 
-module.exports = new PagesController();
+module.exports = models => {
+    return new PagesController(models);
+};

@@ -26,6 +26,9 @@ Since MVC is an organizational pattern, you'll notice that MVC frameworks have w
 types of files. This is one the things that makes MVC so powerful. Organizing things clearly removes a great amount of
 cognitive load and enable speedier development.
 
+MVC frameworks also have a lot of helper, that are not part of MVC per se. Separating out these concepts from the core
+MVC concepts is one of the goals of this post.
+
 The above sounds like a great idea, but it is described in very general terms. To understand in detail what all of it 
 means, we're gong to build a website. The website will have:
 
@@ -704,4 +707,50 @@ function loadBasicControllers(app) {
 }
 ```
 
+`git checkout admin-router` to take a look at the above.
+
+#### Cleanup
+
+Let's move a few things out of `core`. The goal of `core` is to have the minimal set of features for an mvc framework.
+While an ORM is great for mvc, the particular you choose shouldn't matter. Additionally, while we've got a directory structure
+going, and an MVC framework should support using standard directory structures, the particular directory structure we use
+shouldn't matter.
+
+Finally, while our feature set is relatively small at this point, we should document and test the features we have.
+
+
+#### Dependency Injection
+
+Let's make sure that all automatically loaded files work with dependency injection. Controllers need models. Models need
+their ORM. We already have the models being loaded with `sequlize` and `DataType`, so all we need to do is update the loader
+for controllers.
+
+First we'll pass the models to the loader for controllers:
+
+```javascript
+exports.models = loadModels();
+exports.controllers = loadControllers(exports.models);
+```
+
+Then we'll pass the models into each controller:
+
+```javascript
+module.exports = (models) => {
+let controllers = {};
+
+glob.sync('app/controllers/resource/*.controller.js').forEach(controllerFilePath => {
+    let controller = createController(controllerFilePath, models);
+    ... 
+    
+function createController(controllerFilePath, models) {
+    let controller = require(path.resolve(controllerFilePath))(models);
+```
+
+and then update the controllers from requiring in the models to accepting them as an argument:
+
+```javascript
+module.exports = models => {
+    new PagesController(models);
+};
+```
 

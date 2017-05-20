@@ -3,12 +3,11 @@
 const glob = require('glob');
 const path = require('path');
 
-module.exports = () => {
+module.exports = (models) => {
     let controllers = {};
 
-    console.log('- loading resource controllers -');
     glob.sync('app/controllers/resource/*.controller.js').forEach(controllerFilePath => {
-        let controller = createController(controllerFilePath);
+        let controller = createController(controllerFilePath, models);
         // Flag this as a resource controller
         controller.resource = true;
         controllers[controller.name] = controller;
@@ -23,8 +22,8 @@ module.exports = () => {
     return controllers;
 };
 
-function createController(controllerFilePath) {
-    let controller = require(path.resolve(controllerFilePath));
+function createController(controllerFilePath, models) {
+    let controller = require(path.resolve(controllerFilePath))(models);
     // You can optionally override the automatic name given via the file
     controller.name = controller.name || path.basename(controllerFilePath, '.controller.js');
     controller.singularName = controller.singularName || controller.name.replace(/s$/, '');
