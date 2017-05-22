@@ -1,5 +1,7 @@
 # What is MVC
 
+# Intro
+
 MVC allows you to separate your business logic from the rest of your user interface. Models encapsulate the business logic,
 views show the user interface, and controllers receive input and render views via models.
 
@@ -38,8 +40,6 @@ means, we're gong to build a website. The website will have:
 1. User authorization to edit web pages
 1. User authorization to create, edit, and delete users
 
-## Web Pages
-
 Let's start with the typical hard coded "Hello World!" home page. Any user can look at this page. To render it, we will
 need a router, a controller, and a view. Since we know the contents of the page, we don't need a model yet.
 
@@ -50,7 +50,7 @@ we are discussing.
 git clone git@github.com:pajtai/what-is-mvc.git
 ```
 
-### Controllers
+# Controllers
 
 The first thing we'll do is setup our app using an `npm init -y` and creating a `.gitignore`. Now we're ready to 
 include express and start the app:
@@ -124,6 +124,8 @@ console.log(`Express started on port ${PORT}`);
 
 If you try the above and visit http://localhost:3000/ and http://localhost:3000/home , you'll see the both produce the
 same output.
+
+## Actions
 
 To flesh out the example let's include all the actions Laravel uses:
 
@@ -295,7 +297,7 @@ class UsersController {
 module.exports = new UsersController();
 ```
 
-### Models
+# Models
 
 There is no need to use an ORM for models, but it is often convenient to do so. [Sequlize](https://www.npmjs.com/package/sequelize) is a popular ORM for SQL
 databases. In addition to its ORM functionality, it also includes support for migrations. We will be using Sequelize
@@ -311,13 +313,13 @@ another, you can extract that code as a separate module or service.
 
 TODO: discuss importance of seeds / migrations / deploys
 
-#### Migrations
+## Migrations
 
 One thing to watch out for with migrations, is that column additions require both a migration and a model update. For 
 example, if we add a slug column to the `pages` table, the requires an `addColumn` in the migration and adding `slug`
 to the model.
 
-#### Seeds
+## Seeds
 
 To create a Page Model, we must first connect to the database. This means we have to get configs from somewhere. For now
 we will hard code some localhost configs, so make sure you have mysql installed.
@@ -442,7 +444,7 @@ sequelize db:seed:all --models-path app/models
 
 The above is idempotent. It can be run multiple times and will only ever add one row to the table due to the `findOrCreate`.
 
-#### Using Models in Controllers
+## Using Models in Controllers
 
 Now that we have a Model and some data, let's show some data from the DB at `/pages`. We'll have to update our Pages
 Controller. We'll update the show action:
@@ -462,7 +464,7 @@ Controller. We'll update the show action:
     }
 ```
 
-#### Adding the home page at `/`
+### Adding the home page at `/`
 
 Let's allow picking a controller to handle the home page. We'll say that if the controller has this.default = true, then
 it is the home page controller.
@@ -488,7 +490,7 @@ if (controller.index) {
 }
 ```
 
-## Some cleanup before moving on
+# Some cleanup before moving on
 
 At this point we're ready for our first `create` page, but before we do that let's separate out the core of the app from
 the rest. By the core I mean the things that setup the routes and load the models and controllers.
@@ -510,15 +512,15 @@ For now we will simply hard code everything in core, and we will decide later ho
 
 Do [`git checkout core-created`](https://github.com/pajtai/what-is-mvc/tree/core-created) to take a look at the beginnings of core.
 
-## Editing Web Pages
+Let's move on to how we would edit a web page.
 
-### Views
+# Views
 
 So far we've just been using express' `res.render` to return strings from the database. This method quickly becomes 
 cumbersome. Templating data via views is much nicer. We'll use pug template, but the same principles apply for all types
 of templating.
 
-#### The create page
+## Creating pages
 
 To add pages, we need an admin form at `/pages/create` into which we can add the new page content. Let's setup the Page
 Controller `create` action to render a view for us:
@@ -605,7 +607,7 @@ store (req, res) {
 
 To look at the code for this do [`git checkout create-functionality`](https://github.com/pajtai/what-is-mvc/tree/create-functionality).
 
-#### Adding more create pages
+## A generic create page
 
 One thing to note, is that this create page looks very generic. If we add users, our page will look very similar. It seems
 like we should be able to create a single Admin Controller that handles all or our different data types. All it would have
@@ -624,7 +626,7 @@ Finally, we'll keep our controllers cleaner and less repetitive.
 Unfortunately, this will require some creative additions to our Controller functionality, but
 otherwise we will be stuck creating the same admin like features for each Controller.
 
-#### The Admin Controller
+## The Admin Controller
 
 The first thing to notice about the admin controller is that it doesn't adhere to our standard Resource Controller routing.
 To create a new page for example, one would expect to go to `/admin/pages/create`. A Resource
@@ -709,7 +711,7 @@ function loadBasicControllers(app) {
 
 `git checkout admin-router` to take a look at the above.
 
-#### Cleanup
+### Cleanup
 
 Let's move a few things out of `core`. The goal of `core` is to have the minimal set of features for an mvc framework.
 While an ORM is great for mvc, the particular you choose shouldn't matter. Additionally, while we've got a directory structure
@@ -719,7 +721,7 @@ shouldn't matter.
 Finally, while our feature set is relatively small at this point, we should document and test the features we have.
 
 
-#### Dependency Injection
+## Dependency Injection
 
 Let's make sure that all automatically loaded files work with dependency injection. Controllers need models. Models need
 their ORM. We already have the models being loaded with `sequlize` and `DataType`, so all we need to do is update the loader
@@ -754,6 +756,6 @@ module.exports = models => {
 };
 ```
 
-#### Admin Page
+## Admin Page
 
 Let's start with `/:type/create` for our admin panel:
