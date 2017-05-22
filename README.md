@@ -1,6 +1,6 @@
 # What is MVC
 
-# Intro
+## Intro
 
 MVC allows you to separate your business logic from the rest of your user interface. Models encapsulate the business logic,
 views show the user interface, and controllers receive input and render views via models.
