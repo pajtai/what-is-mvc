@@ -490,7 +490,7 @@ if (controller.index) {
 }
 ```
 
-# Some cleanup before moving on
+### Some cleanup before moving on
 
 At this point we're ready for our first `create` page, but before we do that let's separate out the core of the app from
 the rest. By the core I mean the things that setup the routes and load the models and controllers.
