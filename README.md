@@ -910,7 +910,7 @@ We could figure out the column names from a describe query, but we can also use 
 
 `pages/admin.browse.view.pug`
 
-```pug
+```jade
 - function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
 table.table
     thead
