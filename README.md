@@ -758,4 +758,116 @@ module.exports = models => {
 
 ## Admin Page
 
-Let's start with `/:type/create` for our admin panel:
+Let's start with `/:type/create` for our admin panel. This first thing we'll do is render a pre built view. Since this
+view will replace `pages.create.view.pug`, we're not going to worry about making a shared layout.
+
+All we need to do is loop through each model field and render a field group. We'll support `STRING` and `TEXT` for now.
+We'll add dates and other things later.
+
+`app/controllers/basic/admin.controlller.js`:
+
+```javascript
+class AdminController {
+    constructor (models) {
+        this.models = models;
+    }
+
+    index(req, res) {
+        res.send('admin index!');
+    }
+
+    create(req, res) {
+        let model = req.params.type.charAt(0).toUpperCase() + req.params.type.slice(1);
+        this.models[model].describe()
+            .then(schema => {
+                console.log('schema', JSON.stringify(schema,null,4));
+                res.render('pages/admin.create.view.pug', {
+                    type: req.params.type
+                });
+            });
+    }
+}
+```
+
+Immediately we run into issue around having to bind the controller actions. We should automate that. But for now let's
+concentrate on automating the creation of the create page. We can take a look at our schema after a call to
+`this.models.Page.describe()`. To format with proper indntation, let's use `JSON.stringify(schema,null,4)`.
+
+```json
+{
+    "id": {
+        "type": "INT(11)",
+        "allowNull": false,
+        "defaultValue": null,
+        "primaryKey": true
+    },
+    "title": {
+        "type": "VARCHAR(255)",
+        "allowNull": true,
+        "defaultValue": null,
+        "primaryKey": false
+    },
+    "content": {
+        "type": "TEXT",
+        "allowNull": true,
+        "defaultValue": null,
+        "primaryKey": false
+    },
+    "createdAt": {
+        "type": "DATETIME",
+        "allowNull": false,
+        "defaultValue": null,
+        "primaryKey": false
+    },
+    "updatedAt": {
+        "type": "DATETIME",
+        "allowNull": false,
+        "defaultValue": null,
+        "primaryKey": false
+    },
+    "slug": {
+        "type": "VARCHAR(255)",
+        "allowNull": true,
+        "defaultValue": null,
+        "primaryKey": false
+    }
+}
+```
+
+After excluding `id`, `createdAt`, and `updatedAt` as non editable, we are left with 2 VARCHAR, and one TEXT entry. Let's
+only pass those into pug:
+
+```javascript
+res.render('pages/admin.create.view.pug', {
+    type: req.params.type,
+    modelName : model,
+    schema: _.omit(schema, ['id', 'createdAt', 'updatedAt'])
+});
+```
+
+Let's iterate over each schema item we're interested in and make it a `.form-group`:
+
+```pug
+- function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+form(action=`/admin/${type}` method="post")
+    each schemaItemKey in Object.keys(schema)
+        .form-group
+            label(for=`${schemaItemKey}`)= ucfirst(schemaItemKey)
+    button.btn.btn-primary(type="submit") Create
+```
+
+Now  we can create test inputs or textareas based on the type:
+
+```pug
+form(action=`/admin/${type}` method="post")
+    each schemaItemKey in Object.keys(schema)
+        - schemaItem = schema[schemaItemKey];
+        .form-group
+            label(for=`${schemaItemKey}`)= ucfirst(schemaItemKey)
+            if /^VARCHAR/.test(schemaItem.type)
+                input.form-control(type="text" id=`${schemaItemKey}` name=`${schemaItemKey}`)
+            if schemaItem.type === 'TEXT'
+                textarea.form-control(id=`${schemaItemKey}` name=`${schemaItemKey}` rows="5")
+    button.btn.btn-primary(type="submit") Create
+```
+

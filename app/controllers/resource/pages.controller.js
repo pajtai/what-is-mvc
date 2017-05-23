@@ -1,7 +1,5 @@
 'use strict';
 
-console.log(require.main.require('../core').boot, '...');
-
 class PagesController {
 
     constructor (models) {
@@ -13,11 +11,6 @@ class PagesController {
         // Index will show what /home shows
         req.params.page = 'home';
         this.show(req, res, next);
-    }
-
-    // HTML for a new page
-    create (req, res) {
-        res.render('pages/pages.create.view.pug');
     }
 
     // API for a new page
@@ -43,10 +36,6 @@ class PagesController {
                 console.log(404);
                 next();
             });
-    }
-
-    edit (req, res) {
-        res.send(`Edit ${req.params.page}`);
     }
 
     update(req, res) {

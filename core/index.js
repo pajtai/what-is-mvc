@@ -13,8 +13,9 @@ const PORT = 3000;
 
 console.log('>>> loading <<<');
 exports.models = loadModels();
+console.log('>>> done loading models <<<');
 exports.controllers = loadControllers(exports.models);
-console.log('>>> done loading <<<');
+console.log('>>> done loading controllers <<<');
 exports.boot = () => {
     app.set('view engine', 'pug');
     app.set('views', 'app/views');

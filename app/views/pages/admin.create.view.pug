@@ -1,0 +1,23 @@
+html
+    head
+        title Create a Page
+        link(   rel="stylesheet"
+                type="text/css"
+                href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+                integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+                crossorigin="anonymous")
+    body
+        .container
+            .jumbotron
+                h1= `Create a ${modelName.slice(0,-1)}`
+            - function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+            form(action=`/admin/${type}` method="post")
+                each schemaItemKey in Object.keys(schema)
+                    - schemaItem = schema[schemaItemKey];
+                    .form-group
+                        label(for=`${schemaItemKey}`)= ucfirst(schemaItemKey)
+                        if /^VARCHAR/.test(schemaItem.type)
+                            input.form-control(type="text" id=`${schemaItemKey}` name=`${schemaItemKey}`)
+                        if schemaItem.type === 'TEXT'
+                            textarea.form-control(id=`${schemaItemKey}` name=`${schemaItemKey}` rows="5")
+                button.btn.btn-primary(type="submit") Create

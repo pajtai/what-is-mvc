@@ -4,6 +4,7 @@ const glob = require('glob');
 const path = require('path');
 
 module.exports = (models) => {
+    console.log('models in controllers loader', !!models);
     let controllers = {};
 
     glob.sync('app/controllers/resource/*.controller.js').forEach(controllerFilePath => {
@@ -15,7 +16,7 @@ module.exports = (models) => {
 
     console.log('- load basic controllers -');
     glob.sync('app/controllers/basic/*.controller.js').forEach(controllerFilePath => {
-        let controller = createController(controllerFilePath);
+        let controller = createController(controllerFilePath, models);
         controllers[controller.name] = controller;
     });
 
