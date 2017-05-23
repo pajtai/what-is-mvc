@@ -8,21 +8,37 @@ class AdminController {
     }
 
     index(req, res) {
-        res.send('admin index!');
+        let modelName = this.getModel(req);
+        this.models[modelName].findAll({
+            where : {},
+            order: [
+                ['updatedAt', 'DESC']
+            ]
+        })
+            .then(models => {
+                res.render('pages/admin.browse.view.pug', {
+                    type: req.params.type,
+                    modelName,
+                    models
+                });
+            })
     }
 
     create(req, res) {
-        let model = req.params.type.charAt(0).toUpperCase() + req.params.type.slice(1);
-        this.models[model].describe()
+        let modelName = this.getModel(req);
+        this.models[modelName].describe()
             .then(schema => {
                 schema = _.omit(schema, ['id', 'createdAt', 'updatedAt']);
-                console.log(JSON.stringify(schema, null, 4));
                 res.render('pages/admin.create.view.pug', {
                     type: req.params.type,
-                    modelName : model,
+                    modelName,
                     schema
                 });
             });
+    }
+
+    getModel(req) {
+        return req.params.type.charAt(0).toUpperCase() + req.params.type.slice(1);
     }
 }
 

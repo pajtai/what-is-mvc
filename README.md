@@ -878,3 +878,53 @@ BREAD - browse, read, edit, add, delete
 
 We can redirect pages/create and users/create to admin/pages/create and admin/users/create respectively:
 
+```javascript
+create(req, res) {
+    res.redirect('/admin/pages/create');
+}
+```
+
+BREAD inclues, "Browse", so let's build `/admin/:type`. We'll start by getting all post of a certain type, and then adding
+paging:
+
+```javascript
+index(req, res) {
+    let modelName = this.getModel(req);
+    this.models[model].findAll({
+        where : {},
+        order: [
+            ['updatedAt', 'DESC']
+        ]
+    })
+        .then(models => {
+            res.render('pages/admin.browse.view.pug', {
+                type: req.params.type,
+                modelName,
+                models
+            });
+        })
+}
+```
+
+We could figure out the column names from a describe query, but we can also use the first result:
+
+`pages/admin.browse.view.pug`
+
+```pug
+- function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+table.table
+    thead
+        tr
+            for key in Object.keys(models[0].dataValues)
+                th= ucfirst(key)
+    tbody
+        for model in models
+            - console.log(JSON.stringify(model.dataValues,null,4))
+            tr
+                for key in Object.keys(model.dataValues)
+                    - console.log('key',key)
+                    td= model.dataValues[key]
+```
+
+We can make each row clickable. It should lead to an admin edit page. The edit page can be generated in the same way as the
+create page, we just have to fill in the existing values.

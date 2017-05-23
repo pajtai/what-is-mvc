@@ -1,0 +1,27 @@
+html
+    head
+        title= `Browse ${modelName.slice(0,-1)}`
+        link(   rel="stylesheet"
+        type="text/css"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+        crossorigin="anonymous")
+    body
+        .container
+            .jumbotron
+                h1= modelName.slice(0,-1)
+        - function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+        table.table
+            thead
+                tr
+                    for key in Object.keys(models[0].dataValues)
+                        th= ucfirst(key)
+            tbody
+                for model in models
+                    - console.log(JSON.stringify(model.dataValues,null,4))
+                    tr
+                        for key in Object.keys(model.dataValues)
+                            - console.log('key',key)
+                            td= model.dataValues[key]
+
+
