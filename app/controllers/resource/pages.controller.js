@@ -13,6 +13,10 @@ class PagesController {
         this.show(req, res, next);
     }
 
+    create(req, res) {
+        res.redirect('/admin/pages/create');
+    }
+
     // API for a new page
     store (req, res) {
         this.models.Pages.create(req.body)

@@ -849,7 +849,7 @@ Let's iterate over each schema item we're interested in and make it a `.form-gro
 
 ```pug
 - function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
-form(action=`/admin/${type}` method="post")
+form(action=`/${type}` method="post")
     each schemaItemKey in Object.keys(schema)
         .form-group
             label(for=`${schemaItemKey}`)= ucfirst(schemaItemKey)
@@ -859,7 +859,7 @@ form(action=`/admin/${type}` method="post")
 Now  we can create test inputs or textareas based on the type:
 
 ```pug
-form(action=`/admin/${type}` method="post")
+form(action=`/${type}` method="post")
     each schemaItemKey in Object.keys(schema)
         - schemaItem = schema[schemaItemKey];
         .form-group
@@ -870,4 +870,11 @@ form(action=`/admin/${type}` method="post")
                 textarea.form-control(id=`${schemaItemKey}` name=`${schemaItemKey}` rows="5")
     button.btn.btn-primary(type="submit") Create
 ```
+
+Since we already have an API to save the posts, using our Resource controllers, we can make use of those in the forms. This
+means that our admin controllers only need to handle showing the UI for the admin.
+
+BREAD - browse, read, edit, add, delete
+
+We can redirect pages/create and users/create to admin/pages/create and admin/users/create respectively:
 

@@ -6,7 +6,7 @@ class UsersController {
     }
 
     create (req, res) {
-        res.send(`Create ${req.params.user}`);
+        res.redirect('/admin/users/create');
     }
 
     show (req, res) {

@@ -11,7 +11,7 @@ html
             .jumbotron
                 h1= `Create a ${modelName.slice(0,-1)}`
             - function ucfirst(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
-            form(action=`/admin/${type}` method="post")
+            form(action=`/${type}` method="post")
                 each schemaItemKey in Object.keys(schema)
                     - schemaItem = schema[schemaItemKey];
                     .form-group

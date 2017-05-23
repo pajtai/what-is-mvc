@@ -24,17 +24,6 @@ class AdminController {
                 });
             });
     }
-
-    store(req, res) {
-        let model = req.params.type.charAt(0).toUpperCase() + req.params.type.slice(1);
-        this.models[model].create(req.body)
-            .then(() => {
-                res.redirect(`/pages/${req.body.slug}`);
-            })
-            .catch(e => {
-                res.send(e);
-            });
-    }
 }
 
 module.exports = models => {
