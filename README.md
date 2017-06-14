@@ -5,9 +5,11 @@
 MVC allows you to separate your business logic from the rest of your user interface. Models encapsulate the business logic,
 views show the user interface, and controllers receive input and render views via models.
 
-Understanding the concepts behind the popular architectural design pattern of MVC will make you a more well rounded programmer. There
+Understanding the concepts behind the popular architectural design pattern of MVC will make you a more efficient programmer and help you understand the setup of many web projects. There
 are many frameworks across multiple languages that use MVC. To illustrate MVC, we will be using Node. We'll build an
 MVC express app from the ground up. The best way to learn something is to build it.
+
+The code for this post is [here](https://github.com/pajtai/what-is-mvc).
 
 Node is especially suited for this type of exploration, since node has a lot of great libraries, but no towering MVC
 frameworks. Many other languages have mature established MVC frameworks. Ruby has Ruby on Rails, PHP has Laravel, ASP.net
